@@ -1,6 +1,7 @@
 package org.coscup.ccip.fragment;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -52,13 +53,22 @@ public class MainFragment extends TrackFragment {
         invalidTokenMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentIntegrator integrator = new IntentIntegrator(mActivity);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                integrator.setPrompt(getString(R.string.scan_kktix_qrcode));
-                integrator.setCameraId(0);
-                integrator.setBeepEnabled(false);
-                integrator.setBarcodeImageEnabled(false);
-                integrator.initiateScan();
+                new AlertDialog.Builder(mActivity)
+                        .setMessage(getString(R.string.open_via_link))
+                        .setPositiveButton(getString(R.string.scan_kktix_qrcode),new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                scanQrCode();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.selcet_kktix_qrcode),new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                                photoPickerIntent.setType("image/*");
+                                mActivity.startActivityForResult(photoPickerIntent, MainActivity.QR_CODE_REQUEST);
+                            }
+                        })
+                        .show();
+
             }
         });
         scenarioView = (RecyclerView) view.findViewById(R.id.scenarios);
@@ -89,6 +99,16 @@ public class MainFragment extends TrackFragment {
         });
 
         return view;
+    }
+
+    private void scanQrCode() {
+        IntentIntegrator integrator = new IntentIntegrator(mActivity);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt(getString(R.string.scan_kktix_qrcode));
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(false);
+        integrator.initiateScan();
     }
 
     @Override

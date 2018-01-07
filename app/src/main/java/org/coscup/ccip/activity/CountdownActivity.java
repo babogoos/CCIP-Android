@@ -60,7 +60,7 @@ public class CountdownActivity extends TrackActivity {
         } else {
             Set<Map.Entry<String, JsonElement>> entries = attr.entrySet();
             for (Map.Entry<String, JsonElement> entry : entries) {
-                attrText.append(entry.getValue() + "\n");
+                attrText.append(entry.getValue().getAsString() + "\n");
             }
         }
 
